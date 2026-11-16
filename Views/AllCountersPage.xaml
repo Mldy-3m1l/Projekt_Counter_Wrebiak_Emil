@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Counter.Models"
+             x:Class="Counter.Views.AllCountersPage"
+             Title="Moje liczniki"
+             BackgroundColor="#F2F2F2"
+             x:DataType="models:AllCounters">
+
+    <VerticalStackLayout Padding="25" Spacing="15">
+
+        <Label
+            Text="Moje liczniki"
+            FontSize="30"
+            FontAttributes="Bold"
+            TextColor="Black"
+            HorizontalOptions="Center" />
+
+        <Entry
+            x:Name="NameEntry"
+            Placeholder="Wpisz nazwe licznika"
+            BackgroundColor="White"
+            TextColor="Black" />
+
+        <Button
+            Text="Dodaj licznik"
+            Clicked="OnAddCounterClicked"
+            BackgroundColor="DodgerBlue"
+            TextColor="White" />
+
+        <Label
+            Text="Lista licznikow:"
+            FontSize="20"
+            FontAttributes="Bold"
+            TextColor="Black" />
+
+        <CollectionView
+            x:Name="countersCollection"
+            ItemsSource="{Binding Counters}"
+            SelectionMode="Single"
+            SelectionChanged="OnCounterSelected"
+            VerticalOptions="FillAndExpand">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:CounterItem">
+                    <Grid ColumnDefinitions="*,Auto" Padding="5" Margin="0,4">
+
+                        <Label
+                            Text="{Binding Name}"
+                            FontSize="18"
+                            TextColor="Black"
+                            VerticalOptions="Center" />
+
+                        <Label
+                            Grid.Column="1"
+                            Text="{Binding Value}"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            TextColor="DodgerBlue"
+                            VerticalOptions="Center"
+                            Margin="0,0,10,0" />
+
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>
