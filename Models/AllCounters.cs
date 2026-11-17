@@ -1,5 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.Json;
+
+using System.Collections.ObjectModel;
 
 namespace Counter.Models;
 
@@ -7,8 +7,8 @@ internal class AllCounters
 {
     public ObservableCollection<CounterItem> Counters { get; set; } = new();
 
-    private static string FileName =>
-        Path.Combine(FileSystem.AppDataDirectory, "counters.json");
+    private static string FolderPath =>
+        Path.Combine(FileSystem.AppDataDirectory, "Counters");
 
     public AllCounters() => LoadCounters();
 
@@ -16,21 +16,42 @@ internal class AllCounters
     {
         Counters.Clear();
 
-        if (!File.Exists(FileName))
-            return;
+        if (!Directory.Exists(FolderPath))
+            Directory.CreateDirectory(FolderPath);
 
-        string json = File.ReadAllText(FileName);
-        var loaded = JsonSerializer.Deserialize<List<CounterItem>>(json);
+        foreach (string file in Directory.GetFiles(FolderPath, "*.txt"))
+        {
+            string[] lines = File.ReadAllLines(file);
 
-        if (loaded != null)
-            foreach (CounterItem counter in loaded)
-                Counters.Add(counter);
+            if (lines.Length >= 2 && int.TryParse(lines[1], out int value))
+            {
+                Counters.Add(new CounterItem
+                {
+                    Name = lines[0],
+                    Value = value
+                });
+            }
+        }
     }
 
     public void SaveCounters()
     {
-        string json = JsonSerializer.Serialize(Counters.ToList());
-        File.WriteAllText(FileName, json);
+        if (!Directory.Exists(FolderPath))
+            Directory.CreateDirectory(FolderPath);
+
+        foreach (CounterItem counter in Counters)
+        {
+            string fileName = Convert.ToBase64String(
+                System.Text.Encoding.UTF8.GetBytes(counter.Name)) + ".txt";
+
+            string filePath = Path.Combine(FolderPath, fileName);
+
+            File.WriteAllLines(filePath, new[]
+            {
+                counter.Name,
+                counter.Value.ToString()
+            });
+        }
     }
 
     public CounterItem? FindByName(string name)
