@@ -41,9 +41,7 @@ internal class AllCounters
 
         foreach (CounterItem counter in Counters)
         {
-            string fileName = Convert.ToBase64String(
-                System.Text.Encoding.UTF8.GetBytes(counter.Name)) + ".txt";
-
+            string fileName = counter.Name + ".txt";
             string filePath = Path.Combine(FolderPath, fileName);
 
             File.WriteAllLines(filePath, new[]
